@@ -40,8 +40,6 @@ public final class Flusenbot {
         log("Login successfull");
         bot.setUpdatesListener(new UpdateListener(bot));
         log("Registered Listener...");
-        log("joar", Level.WARNING);
-        log("schon besser", Level.SEVERE);
         new Thread(() -> {
             Scanner sc = new Scanner(System.in);
             while (sc.hasNextLine()) {
