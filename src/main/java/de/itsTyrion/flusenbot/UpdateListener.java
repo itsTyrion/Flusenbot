@@ -89,7 +89,6 @@ public class UpdateListener implements UpdatesListener {
                     if (msg.text() != null) {
                         val user = msg.from();
                         val chatID = msg.chat().id();
-                        System.out.println(chatID);
 
                         if (msg.text().equals("!cooldown")) {
                             bot.execute(new GetChatAdministrators(chatID), new CooldownCallback(user.id(), chatID));
