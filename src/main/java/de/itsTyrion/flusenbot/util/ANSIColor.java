@@ -11,13 +11,4 @@ public interface ANSIColor {
     String PURPLE = "\u001B[35m";
     String CYAN = "\u001B[36m";
     String WHITE = "\u001B[37m";
-
-    String BLACK_BG = "\u001B[40m";
-    String RED_BG = "\u001B[41m";
-    String GREEN_BG = "\u001B[42m";
-    String YELLOW_BG = "\u001B[43m";
-    String BLUE_BG = "\u001B[44m";
-    String PURPLE_BG = "\u001B[45m";
-    String CYAN_BG = "\u001B[46m";
-    String WHITE_BG = "\u001B[47m";
 }

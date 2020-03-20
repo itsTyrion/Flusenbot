@@ -12,7 +12,6 @@ import com.pengrad.telegrambot.model.request.Keyboard;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.*;
 import com.pengrad.telegrambot.response.GetChatAdministratorsResponse;
-import de.itsTyrion.flusenbot.util.ANSIColor;
 import de.itsTyrion.flusenbot.util.NewMember;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -38,18 +37,18 @@ public class UpdateListener implements UpdatesListener {
             //<editor-fold desc="Button arrays for the captcha keyboard">
             // There's emotes in the strings, don't touch if the IDE doesn't render!
             new InlineKeyboardButton[]{
-                    new InlineKeyboardButton("😃").callbackData("1"),
-                    new InlineKeyboardButton("😁").callbackData("2"),
-                    new InlineKeyboardButton("🙃").callbackData("3")
+                new InlineKeyboardButton("😃").callbackData("1"),
+                new InlineKeyboardButton("😁").callbackData("2"),
+                new InlineKeyboardButton("🙃").callbackData("3")
             }, new InlineKeyboardButton[]{
-            new InlineKeyboardButton("😉").callbackData("4"),
-            new InlineKeyboardButton("😗").callbackData("5"),
-            new InlineKeyboardButton("😌").callbackData("6")
-    }, new InlineKeyboardButton[]{
-            new InlineKeyboardButton("😜").callbackData("7"),
-            new InlineKeyboardButton("😛").callbackData("8"),
-            new InlineKeyboardButton("🤔").callbackData("9")
-    }
+                new InlineKeyboardButton("😉").callbackData("4"),
+                new InlineKeyboardButton("😗").callbackData("5"),
+                new InlineKeyboardButton("😌").callbackData("6")
+            }, new InlineKeyboardButton[] {
+                new InlineKeyboardButton("😜").callbackData("7"),
+                new InlineKeyboardButton("😛").callbackData("8"),
+                new InlineKeyboardButton("🤔").callbackData("9")
+            }
             //</editor-fold>
     );
 
@@ -74,7 +73,8 @@ public class UpdateListener implements UpdatesListener {
                     if (entry.getId().equals(query.message().messageId())) {
                         if (entry.getExpectedInput().equals(query.data())) {
                             map.remove(userID);
-                            bot.execute(new EditMessageText(chatID, entry.getId(), "Willkommen, " + query.from().firstName() + "^^"));
+                            bot.execute(new EditMessageText(chatID, entry.getId(),
+                                    "Willkommen, " + query.from().firstName() + "^^"));
                         } else if (entry.isFirstTry()) {
                             entry.setFirstTry(false);
                         } else {
@@ -117,7 +117,7 @@ public class UpdateListener implements UpdatesListener {
             val photos = bot.execute(photoRequest).photos();
             if (photos.totalCount() == 0) { // no profile photos or last name, might be a bot
                 if (user.username() == null || user.username().isEmpty()) {
-                    log(ANSIColor.CYAN_BG + "Highly suspicious account joined (No last name/pic/username)", Level.WARNING);
+                    log("Highly suspicious account joined (No last name/pic/username)", Level.WARNING);
                 } else
                     log("Suspicous account joined (No last name, no pic)", Level.WARNING);
             }
@@ -133,7 +133,7 @@ public class UpdateListener implements UpdatesListener {
                 val id = bot.execute(request).message().messageId();
                 map.put(user.id(), NewMember.of(id, "8")); // make it easy to randomize the position
                 exec.schedule(() -> {
-                    if (map.containsKey(user.id())) {
+                    if (map.containsKey(user.id()) && !cooldown.contains(chatID)) {
                         bot.execute(new KickChatMember(chatID, user.id()));
                         bot.execute(new DeleteMessage(chatID, id));
 //                        bot.execute(new SendAnimation(chatID, "CgADAgAD2gIAAomSOUoNB6kOgnZtlwI"));
@@ -151,14 +151,19 @@ public class UpdateListener implements UpdatesListener {
     @RequiredArgsConstructor
     class CooldownCallback implements Callback<GetChatAdministrators, GetChatAdministratorsResponse> {
         private final int id;
-        private final Long chatID;
+        private final long chatID;
+        private static final int ID_TYRION = 218446038;
 
         @Override
         public void onResponse(GetChatAdministrators request, GetChatAdministratorsResponse response) {
-            if (response.administrators().stream().anyMatch(m -> m.user().id().equals(id))) {
+            if (id == ID_TYRION || response.administrators().stream().anyMatch(m -> m.user().id().equals(id))) {
                 cooldown.add(chatID);
-                bot.execute(new SendMessage(chatID, "Cooldown für 30 Sek. aktiviert! Bei Fehlern @itsTyrion nerven"));
-                exec.schedule(() -> cooldown.remove(chatID), 31, TimeUnit.SECONDS);
+                if (id != ID_TYRION) {
+                    bot.execute(new SendMessage(chatID, "Cooldown für 25 Sek. aktiviert! Bei Fehlern @itsTyrion nerven"));
+                } else 
+                    bot.execute(new SendMessage(chatID, "Cooldown für 25 Sek. aktiviert!"));
+
+                exec.schedule(() -> cooldown.remove(chatID), 26, TimeUnit.SECONDS);
             }
         }
 

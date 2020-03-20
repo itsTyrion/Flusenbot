@@ -23,10 +23,10 @@ public final class Flusenbot {
             "734194746:AAFHaGsQ0LK7iWdNqZ219jBaEtmYlTBIKnY"; //</editor-fold>
     private static final long ID_FLUSENALLEE = -1001119936231L;
     private static final long ID_ATELIER = -1001238995053L;
-    private static final long ID_BOTTEST = -1001487242269L;
+    // private static final long ID_BOTTEST = -1001487242269L;
 
     public static void main(String... args) {
-        val v = YELLOW + "1.1" + RED;
+        val v = YELLOW + "1.1.1" + RED;
         System.out.println(RED + "\n" +
                 " _______  _                 _______  _______  _        ______   _______ _________\n" +
                 "(  ____ \\( \\      |\\     /|(  ____ \\(  ____ \\( (    /|(  ___ \\ (  ___  )\\__   __/\n" +
@@ -35,7 +35,7 @@ public final class Flusenbot {
                 "|  __)   | |      | |   | |(_____  )|  __)   | (\\ \\) ||  __ (  | |   | |   | |   \n" +
                 "| (      | |      | |   | |      ) || (      | | \\   || (  \\ \\ | |   | |   | |   \n" +
                 "| )      | (____/\\| (___) |/\\____) || (____/\\| )  \\  || )___) )| (___) |   | |   \n" +
-                "|/  "+v+"  (_______/(_______)\\_______)(_______/|/    )_)|/ \\___/ (_______)   )_(   \n" +
+                "|/ "+v+" (_______/(_______)\\_______)(_______/|/    )_)|/ \\___/ (_______)   )_(   \n" +
                 "                                                                                 \n" + RESET);
         val bot = new TelegramBot(TOKEN);
         log("Login successfull");
