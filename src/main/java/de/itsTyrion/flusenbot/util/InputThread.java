@@ -26,7 +26,9 @@ public final class InputThread extends Thread {
                 val joined = String.join(" ", Arrays.copyOfRange(split, 1, split.length));
 
                 //noinspection IfCanBeSwitch
-                if (split[0].equals("!fluff")) {
+                if (split[0].equals("!stop")) {
+                    Runtime.getRuntime().exit(0);
+                } else if (split[0].equals("!fluff")) {
                     bot.execute(new SendMessage(ID_FLUSENALLEE, joined));
                 } else if (split[0].equals("!atelier")) {
                     bot.execute(new SendMessage(ID_ATELIER, joined));

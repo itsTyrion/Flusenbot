@@ -19,7 +19,6 @@ public final class Flusenbot {
 
     public static void main(String... args) {
         val start = System.currentTimeMillis();
-        val v = YELLOW + "1.2" + RED;
         System.out.println(RED + "\n" +
                 " _______  _                 _______  _______  _        ______   _______ _________\n" +
                 "(  ____ \\( \\      |\\     /|(  ____ \\(  ____ \\( (    /|(  ___ \\ (  ___  )\\__   __/\n" +
@@ -28,8 +27,8 @@ public final class Flusenbot {
                 "|  __)   | |      | |   | |(_____  )|  __)   | (\\ \\) ||  __ (  | |   | |   | |   \n" +
                 "| (      | |      | |   | |      ) || (      | | \\   || (  \\ \\ | |   | |   | |   \n" +
                 "| )      | (____/\\| (___) |/\\____) || (____/\\| )  \\  || )___) )| (___) |   | |   \n" +
-                "|/ "+v+" (_______/(_______)\\_______)(_______/|/    )_)|/ \\___/ (_______)   )_(   \n" +
-                "\n" + RESET);
+                "|/      (_______/(_______)\\_______)(_______/|/    )_)|/ \\___/ (_______)   )_(   \n" +
+                "\n" + YELLOW + "1.2.1\n" + RESET);
         System.setErr(new Log.ErrStream());
         Log.log("Logging in...");
         val api = new TelegramBot(TOKEN);
