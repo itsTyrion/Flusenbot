@@ -6,7 +6,7 @@
 
     <groupId>de.itsTyrion</groupId>
     <artifactId>FlusenBot</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,7 +31,10 @@
                 <version>3.2.0</version>
                 <configuration>
                     <archive>
-                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                            <mainClass>de.itsTyrion.flusenbot.Flusenbot</mainClass>
+                        </manifest>
                     </archive>
                 </configuration>
             </plugin>
@@ -39,6 +42,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.2</version>
+                <configuration>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>module-info.java</exclude>
+                            <exclude>module-info.class</exclude>
+                        </excludes>
+                    </artifactSet>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -59,7 +70,7 @@
         <dependency>
             <groupId>com.github.pengrad</groupId>
             <artifactId>java-telegram-bot-api</artifactId>
-            <version>LATEST</version>
+            <version>4.8.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -1,62 +1,68 @@
 package de.itsTyrion.flusenbot.command;
 
-import com.pengrad.telegrambot.Callback;
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.DeleteMessage;
-import com.pengrad.telegrambot.request.GetChatAdministrators;
+import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
-import com.pengrad.telegrambot.response.GetChatAdministratorsResponse;
+import de.itsTyrion.flusenbot.cache.AdminCache;
 import de.itsTyrion.flusenbot.handler.MessageHandler;
 import de.itsTyrion.flusenbot.util.Utils;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+import java.util.Arrays;
 
 public class CommandHandler {
-    private final TelegramBot api;
+    private final @NotNull TelegramBot api;
 
-    public CommandHandler(TelegramBot api) {
+    private static final int ID_TYRION = 218446038;
+
+    public CommandHandler(@NotNull TelegramBot api) {
         this.api = api;
     }
 
-    public void handleCommand(Message msg) {
+
+    public void handleCommand(@NotNull Message msg, @NotNull Chat chat, @NotNull User from) {
         val text = msg.text();
-        val chatID = msg.chat().id();
+        if (text.contains("@") && !text.contains("Flusenbot")) return;
+        val split = text.split(" ");
+        val cmd = split[0].substring(1).replace("@Flusenbot", "");
+        val args = Arrays.copyOfRange(split, 1, split.length);
+        val chatID = chat.id();
 
-        if (text.equals("!cooldown") ||text.equals("/cooldown")) {
-            api.execute(new GetChatAdministrators(chatID), new CooldownCallback(msg.from().id(), chatID));
-        } else if (text.startsWith("/")) {
-            int id = api.execute(new SendMessage(chatID, "Bald...")).message().messageId();
-            Utils.runDelayed(() -> api.execute(new DeleteMessage(chatID, id)), 5);
-        }
-    }
-
-
-    @RequiredArgsConstructor
-    class CooldownCallback implements Callback<GetChatAdministrators, GetChatAdministratorsResponse> {
-        private final int id;
-        private final long chatID;
-        private static final int ID_TYRION = 218446038;
-
-        @Override
-        public void onResponse(GetChatAdministrators request, GetChatAdministratorsResponse response) {
-            if (id == ID_TYRION || response.administrators().stream().anyMatch(m -> m.user().id().equals(id))) {
+        switch (cmd) {
+            case "cooldown":
+                if (!AdminCache.isAdmin(from, chat) && from.id() != ID_TYRION)
+                    return;
                 MessageHandler.addCooldown(chatID);
-                if (id != ID_TYRION) {
+
+                if (from.id() != ID_TYRION) {
                     api.execute(new SendMessage(chatID, "Cooldown für 25 Sek. aktiviert! Bei Fehlern @itsTyrion nerven"));
                 } else
                     api.execute(new SendMessage(chatID, "Cooldown für 25 Sek. aktiviert!"));
 
                 Utils.runDelayed(() -> MessageHandler.removeCooldown(chatID), 26);
+                break;
+            case "reloadadmins":
+                if (!AdminCache.isAdmin(from, chat))
+                    return;
+                AdminCache.refreshAdminCache(chat);
+                api.execute(new SendMessage(chatID, "Reloaded! (" + AdminCache.getAdmins(chat).size() + " Admins)"));
+                break;
+            case "ping": {
+                val now = System.currentTimeMillis();
+                int id = api.execute(new SendMessage(chatID, "Pong!")).message().messageId();
+                api.execute(new EditMessageText(chatID, id, "Pong! (" + (System.currentTimeMillis() - now) + "ms)"));
+                break;
             }
-        }
-
-        @Override
-        public void onFailure(GetChatAdministrators request, IOException ex) {
-            api.execute(new SendMessage(chatID, "Ein Fehler ist aufgetreten!"));
-            ex.printStackTrace();
+            default: {
+                int id = api.execute(new SendMessage(chatID, "Bald...")).message().messageId();
+                Utils.runDelayed(() -> api.execute(new DeleteMessage(chatID, id)), 5);
+                break;
+            }
         }
     }
 }
