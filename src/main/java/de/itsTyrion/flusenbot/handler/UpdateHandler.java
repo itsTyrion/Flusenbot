@@ -33,7 +33,9 @@ public class UpdateHandler implements UpdatesListener {
     public int process(List<Update> updates) {
         try {
             for (val update : updates) {
-                if (update.callbackQuery() != null) {
+                if (update.message() != null) {
+                    messageHandler.handleMessage(update.message());
+                } else if (update.callbackQuery() != null) {
                     val query = update.callbackQuery();
                     val userID = query.from().id();
                     val entry = map.get(userID);
@@ -57,8 +59,6 @@ public class UpdateHandler implements UpdatesListener {
 //                            bot.execute(new SendAnimation(chatID, "CgADAgAD2gIAAomSOUoNB6kOgnZtlwI"));
                         }
                     }
-                } else if (update.message() != null) {
-                    messageHandler.handleMessage(update.message());
                 }
             }
         } catch (Exception ex) {
