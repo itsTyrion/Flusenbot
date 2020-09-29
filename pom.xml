@@ -6,7 +6,7 @@
 
     <groupId>de.itsTyrion</groupId>
     <artifactId>FlusenBot</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>com.github.pengrad</groupId>
             <artifactId>java-telegram-bot-api</artifactId>
-            <version>4.8.0</version>
+            <version>4.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

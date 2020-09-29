@@ -13,8 +13,6 @@ import de.itsTyrion.flusenbot.util.Utils;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
 public class CommandHandler {
     private final @NotNull TelegramBot api;
 
@@ -29,8 +27,8 @@ public class CommandHandler {
         val text = msg.text();
         if (text.contains("@") && !text.contains("Flusenbot")) return;
         val split = text.split(" ");
-        val cmd = split[0].substring(1).replace("@Flusenbot", "");
-        val args = Arrays.copyOfRange(split, 1, split.length);
+        val cmd = split[0].substring(1).replaceAll("@[Ff]lusenbot", "");
+//        val args = Arrays.copyOfRange(split, 1, split.length);
         val chatID = chat.id();
 
         switch (cmd) {

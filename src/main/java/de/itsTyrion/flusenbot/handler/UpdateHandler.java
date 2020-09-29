@@ -31,8 +31,8 @@ public class UpdateHandler implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
-        try {
-            for (val update : updates) {
+        for (val update : updates) {
+            try {
                 if (update.message() != null) {
                     messageHandler.handleMessage(update.message());
                 } else if (update.callbackQuery() != null) {
@@ -41,7 +41,6 @@ public class UpdateHandler implements UpdatesListener {
                     val entry = map.get(userID);
                     if (entry == null) continue;
                     val chatID = query.message().chat().id();
-//                    if (chatID.equals(Flusenbot.ID_FLUSENALLEE)) return update.updateId();
 
                     if (entry.getId().equals(query.message().messageId())) {
                         if (entry.getExpectedInput().equals(query.data())) {
@@ -60,9 +59,9 @@ public class UpdateHandler implements UpdatesListener {
                         }
                     }
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
         return CONFIRMED_UPDATES_ALL;
     }
