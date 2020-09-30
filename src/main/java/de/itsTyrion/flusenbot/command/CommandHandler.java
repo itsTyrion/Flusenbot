@@ -5,62 +5,65 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.DeleteMessage;
-import com.pengrad.telegrambot.request.EditMessageText;
+import com.pengrad.telegrambot.request.GetChatMember;
 import com.pengrad.telegrambot.request.SendMessage;
 import de.itsTyrion.flusenbot.cache.AdminCache;
-import de.itsTyrion.flusenbot.handler.MessageHandler;
+import de.itsTyrion.flusenbot.command.commands.Cooldown;
+import de.itsTyrion.flusenbot.command.commands.Ping;
+import de.itsTyrion.flusenbot.command.commands.ReloadAdmins;
+import de.itsTyrion.flusenbot.command.commands.Soon;
 import de.itsTyrion.flusenbot.util.Utils;
+import lombok.NonNull;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 
-public class CommandHandler {
-    private final @NotNull TelegramBot api;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-    private static final int ID_TYRION = 218446038;
+public final class CommandHandler {
+    final @NonNull TelegramBot api;
+    private final Map<String, Command> commands;
 
-    public CommandHandler(@NotNull TelegramBot api) {
+    public static final int ID_TYRION = 218446038;
+
+    public CommandHandler(@NonNull TelegramBot api) {
         this.api = api;
+        val map = new HashMap<String, Command>();
+
+        map.put("ping", new Ping());
+        map.put("reloadadmins", new ReloadAdmins());
+        map.put("cooldown", new Cooldown());
+        map.put("kick", new Soon());
+        map.put("mute", new Soon());
+        map.put("ban", new Soon());
+
+        commands = Collections.unmodifiableMap(map);
     }
 
-
-    public void handleCommand(@NotNull Message msg, @NotNull Chat chat, @NotNull User from) {
+    public void handleCommand(@NonNull Message msg, @NonNull Chat chat, @NonNull User user) {
         val text = msg.text();
-        if (text.contains("@") && !text.contains("Flusenbot")) return;
+        if (text.contains("@") && !text.contains("flusenbot"))
+            return;
+
         val split = text.split(" ");
-        val cmd = split[0].substring(1).replaceAll("@[Ff]lusenbot", "");
-//        val args = Arrays.copyOfRange(split, 1, split.length);
-        val chatID = chat.id();
+        val command = commands.get(split[0].substring(1).replace("@flusenbot", "").toLowerCase());
 
-        switch (cmd) {
-            case "cooldown":
-                if (!AdminCache.isAdmin(from, chat) && from.id() != ID_TYRION)
-                    return;
-                MessageHandler.addCooldown(chatID);
+        if (command == null)
+            return;
 
-                if (from.id() != ID_TYRION) {
-                    api.execute(new SendMessage(chatID, "Cooldown für 25 Sek. aktiviert! Bei Fehlern @itsTyrion nerven"));
-                } else
-                    api.execute(new SendMessage(chatID, "Cooldown für 25 Sek. aktiviert!"));
+        boolean hasPermissions = true;
+        if (command.getPermissions().length != 0) {
+            val member = api.execute(new GetChatMember(chat.id(), user.id())).chatMember();
+            hasPermissions = Arrays.stream(command.getPermissions()).allMatch(permission -> permission.check(member));
+//                    || command.getName().equals("cooldown") && chat.id() == -1001238995053L && user.id() == ID_TYRION;
+        }
 
-                Utils.runDelayed(() -> MessageHandler.removeCooldown(chatID), 26);
-                break;
-            case "reloadadmins":
-                if (!AdminCache.isAdmin(from, chat))
-                    return;
-                AdminCache.refreshAdminCache(chat);
-                api.execute(new SendMessage(chatID, "Reloaded! (" + AdminCache.getAdmins(chat).size() + " Admins)"));
-                break;
-            case "ping": {
-                val now = System.currentTimeMillis();
-                int id = api.execute(new SendMessage(chatID, "Pong!")).message().messageId();
-                api.execute(new EditMessageText(chatID, id, "Pong! (" + (System.currentTimeMillis() - now) + "ms)"));
-                break;
-            }
-            default: {
-                int id = api.execute(new SendMessage(chatID, "Bald...")).message().messageId();
-                Utils.runDelayed(() -> api.execute(new DeleteMessage(chatID, id)), 5);
-                break;
-            }
+        if ((!command.isAdminOnly() || AdminCache.isAdmin(user, chat)) && hasPermissions) {
+            command.execute(Arrays.copyOfRange(split, 1, split.length), chat, user);
+        } else {
+            int id = api.execute(new SendMessage(chat.id(), "⚠️No permission")).message().messageId();
+            Utils.runDelayed(() -> api.execute(new DeleteMessage(chat.id(), id)), 5);
         }
     }
 }

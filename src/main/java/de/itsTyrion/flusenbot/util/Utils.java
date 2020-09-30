@@ -1,7 +1,7 @@
 package de.itsTyrion.flusenbot.util;
 
+import lombok.NonNull;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +24,7 @@ public final class Utils {
      *         -2 for wrong input (negative, not a number..),
      *         otherwise the time parsed to milliseconds
      */
-    public static long parseTimeInput(@NotNull String s) {
+    public static long parseTimeInput(@NonNull String s) {
         if (s.equals("-1") || s.equals("perma") || s.equals("permanent"))
             return -1L;
 

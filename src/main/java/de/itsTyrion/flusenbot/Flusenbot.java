@@ -4,8 +4,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import de.itsTyrion.flusenbot.handler.UpdateHandler;
 import de.itsTyrion.flusenbot.util.InputThread;
 import de.itsTyrion.flusenbot.util.Log;
+import lombok.NonNull;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 
 import static de.itsTyrion.flusenbot.util.ANSIColor.*;
 
@@ -17,7 +17,7 @@ public final class Flusenbot {
     private static final String TOKEN = //<editor-fold desc=":thinking:">
             "734194746:AAFHaGsQ0LK7iWdNqZ219jBaEtmYlTBIKnY"; //</editor-fold>
     //    private static final long ID_BOTTEST = -1001487242269L;
-    private static final String VERSION = "1.2.2";
+    private static final String VERSION = "1.2.4";
     public static TelegramBot api;
 
     public static void main(String... args) {
@@ -27,7 +27,7 @@ public final class Flusenbot {
 
         Log.log("Logging in...");
         api = new TelegramBot(TOKEN);
-        Log.log("Login successfull.");
+        Log.log("Login successful.");
         Log.log("Registering Listeners...");
         api.setUpdatesListener(new UpdateHandler(api));
 
@@ -36,7 +36,7 @@ public final class Flusenbot {
         Log.log("Startup complete after " + (System.currentTimeMillis() - start) + "ms");
     }
 
-    private static @NotNull String getLogo() {
+    private static @NonNull String getLogo() {
         val base = RED + "\n" +
                 " _______  _                 _______  _______  _        ______   _______ _________\n" +
                 "(  ____ \\( \\      |\\     /|(  ____ \\(  ____ \\( (    /|(  ___ \\ (  ___  )\\__   __/\n" +
@@ -53,7 +53,7 @@ public final class Flusenbot {
         return base.replace(toReplace, ')' + replacement) + RESET + '\n';
     }
 
-    private static @NotNull String substringBefore(@NotNull String str) {
+    private static @NonNull String substringBefore(@NonNull String str) {
         return str.substring(0, str.indexOf('|') - 1);
     }
 }

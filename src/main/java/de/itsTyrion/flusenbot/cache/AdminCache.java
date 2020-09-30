@@ -18,7 +18,6 @@ public final class AdminCache {
         return adminMap.computeIfAbsent(chat, chat1 -> getChatAdmins(chat.id()));
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isAdmin(User user, Chat chat) {
         return getAdmins(chat).stream().anyMatch(it -> it.user().equals(user));
     }
