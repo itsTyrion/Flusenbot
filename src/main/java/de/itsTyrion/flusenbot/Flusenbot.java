@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import de.itsTyrion.flusenbot.handler.UpdateHandler;
 import de.itsTyrion.flusenbot.util.InputThread;
 import de.itsTyrion.flusenbot.util.Log;
+import de.itsTyrion.flusenbot.util.Utils;
 import lombok.NonNull;
 
 import static de.itsTyrion.flusenbot.util.ANSIColor.*;
@@ -13,20 +14,25 @@ import static de.itsTyrion.flusenbot.util.ANSIColor.*;
  * @since 25.04.2019
  */
 public final class Flusenbot {
-    private static final String TOKEN = //<editor-fold desc=":thinking:">
-            "734194746:AAFHaGsQ0LK7iWdNqZ219jBaEtmYlTBIKnY"; //</editor-fold>
     //    private static final long ID_BOTTEST = -1001487242269L;
-    private static final String VERSION = "1.2.4";
+    private static final String VERSION = "1.2.6";
     public static TelegramBot api;
 
     public static void main(String... args) {
         var start = System.currentTimeMillis();
         System.out.println(getLogo());
-        System.setErr(new Log.ErrStream());
+        Log.setup();
 
         Log.log("Logging in...");
-        api = new TelegramBot(TOKEN);
-        Log.log("Login successful.");
+        var token = System.getenv("BOT_TOKEN");
+        if (token == null) {
+            Log.error("Token not set as 'BOT_TOKEN'");
+            Log.warning("Configuration issue. Shutting down in 5s.");
+            Utils.runDelayed(() -> System.exit(1), 5);
+            return;
+        }
+        api = new TelegramBot(token);
+        Log.log("Logged in");
         Log.log("Registering Listeners...");
         api.setUpdatesListener(new UpdateHandler(api));
 
