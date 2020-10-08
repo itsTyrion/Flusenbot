@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.GetChatAdministrators;
+import lombok.NonNull;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import static de.itsTyrion.flusenbot.Flusenbot.api;
 public final class AdminCache {
     private static final Map<Chat, List<ChatMember>> adminMap = new ConcurrentHashMap<>();
 
-    public static List<ChatMember> getAdmins(Chat chat) {
+    private static @NonNull List<ChatMember> getAdmins(Chat chat) {
         return adminMap.computeIfAbsent(chat, chat1 -> getChatAdmins(chat.id()));
     }
 
@@ -26,20 +27,7 @@ public final class AdminCache {
         adminMap.put(chat, getChatAdmins(chat.id()));
     }
 
-    private static List<ChatMember> getChatAdmins(long chatID) {
+    private static @NonNull List<ChatMember> getChatAdmins(long chatID) {
         return api.execute(new GetChatAdministrators(chatID)).administrators();
     }
-
-//    @RequiredArgsConstructor
-//    class AdminCallback implements Callback<GetChatAdministrators, GetChatAdministratorsResponse> {
-//        private final long chatID;
-//
-//        public void onResponse(GetChatAdministrators request, GetChatAdministratorsResponse response) {}
-//
-//        public void onFailure(GetChatAdministrators request, IOException ex) {
-//            api.execute(new SendMessage(chatID, "Ein Fehler ist aufgetreten!"));
-//            System.err.println("An error occured in chat with id " + chatID);
-//            ex.printStackTrace();
-//        }
-//    }
 }

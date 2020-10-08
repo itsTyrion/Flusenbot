@@ -9,7 +9,6 @@ import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.KickChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import de.itsTyrion.flusenbot.util.NewMember;
-import lombok.val;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,16 +30,17 @@ public class UpdateHandler implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
-        for (val update : updates) {
+        for (var update : updates) {
             try {
                 if (update.message() != null) {
                     messageHandler.handleMessage(update.message());
                 } else if (update.callbackQuery() != null) {
-                    val query = update.callbackQuery();
-                    val userID = query.from().id();
-                    val entry = map.get(userID);
-                    if (entry == null) continue;
-                    val chatID = query.message().chat().id();
+                    var query = update.callbackQuery();
+                    var userID = query.from().id();
+                    var entry = map.get(userID);
+                    if (entry == null)
+                        continue;
+                    var chatID = query.message().chat().id();
 
                     if (entry.getId().equals(query.message().messageId())) {
                         if (entry.getExpectedInput().equals(query.data())) {
@@ -48,7 +48,7 @@ public class UpdateHandler implements UpdatesListener {
                             bot.execute(new EditMessageText(chatID, entry.getId(),
                                     "Willkommen, " + query.from().firstName() + "^^"));
                             // unrestrict and give back chat-default permissions
-                            bot.execute(new RestrictChatMember(chatID, userID, unrestrict));
+                            bot.execute(new RestrictChatMember(chatID, userID, UNRESTRICT));
                         } else if (entry.isFirstTry()) {
                             entry.setFirstTry(false);
                         } else {
@@ -66,7 +66,7 @@ public class UpdateHandler implements UpdatesListener {
         return CONFIRMED_UPDATES_ALL;
     }
 
-    private static final ChatPermissions unrestrict = new ChatPermissions()
+    private static final ChatPermissions UNRESTRICT = new ChatPermissions()
             .canSendMessages(true).canSendMediaMessages(true).canSendOtherMessages(true).canAddWebPagePreviews(true)
             .canInviteUsers(true).canSendPolls(true).canChangeInfo(true).canPinMessages(true);
 }

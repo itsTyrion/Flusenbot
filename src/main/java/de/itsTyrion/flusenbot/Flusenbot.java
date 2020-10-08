@@ -5,7 +5,6 @@ import de.itsTyrion.flusenbot.handler.UpdateHandler;
 import de.itsTyrion.flusenbot.util.InputThread;
 import de.itsTyrion.flusenbot.util.Log;
 import lombok.NonNull;
-import lombok.val;
 
 import static de.itsTyrion.flusenbot.util.ANSIColor.*;
 
@@ -21,7 +20,7 @@ public final class Flusenbot {
     public static TelegramBot api;
 
     public static void main(String... args) {
-        val start = System.currentTimeMillis();
+        var start = System.currentTimeMillis();
         System.out.println(getLogo());
         System.setErr(new Log.ErrStream());
 
@@ -37,7 +36,7 @@ public final class Flusenbot {
     }
 
     private static @NonNull String getLogo() {
-        val base = RED + "\n" +
+        var base = RED + "\n" +
                 " _______  _                 _______  _______  _        ______   _______ _________\n" +
                 "(  ____ \\( \\      |\\     /|(  ____ \\(  ____ \\( (    /|(  ___ \\ (  ___  )\\__   __/\n" +
                 "| (    \\/| (      | )   ( || (    \\/| (    \\/|  \\  ( || (   ) )| (   ) |   ) (   \n" +
@@ -48,8 +47,8 @@ public final class Flusenbot {
                 "|/       (_______/(_______)\\_______)(_______/|/    \\_)|/ \\___/ (_______)   )_(   \n" +
                 "\n";
 
-        val toReplace = ")      |";
-        val replacement = CYAN + VERSION + substringBefore(toReplace.substring(VERSION.length())) + RED + '|';
+        var toReplace = ")      |";
+        var replacement = CYAN + VERSION + substringBefore(toReplace.substring(VERSION.length())) + RED + '|';
         return base.replace(toReplace, ')' + replacement) + RESET + '\n';
     }
 

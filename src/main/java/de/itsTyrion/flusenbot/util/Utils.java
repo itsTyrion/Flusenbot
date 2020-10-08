@@ -1,7 +1,6 @@
 package de.itsTyrion.flusenbot.util;
 
 import lombok.NonNull;
-import lombok.val;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,14 +27,13 @@ public final class Utils {
         if (s.equals("-1") || s.equals("perma") || s.equals("permanent"))
             return -1L;
 
-        val split = splitter.split(s); // the input split in numeric (if it contains numbers) and characters
+        var split = splitter.split(s); // the input split in numeric (if it contains numbers) and characters
 
-        // if thrown, NumberFormatException is supressed and null will be returned
         int i;
         try {
             i = Integer.parseInt(s);
         } catch (NumberFormatException ex) {
-            i = -2;
+            return -2;
         }
         if (i < 0) // negative time input doesn't make any sense for us
             return -2;

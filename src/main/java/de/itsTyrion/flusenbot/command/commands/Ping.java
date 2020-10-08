@@ -10,8 +10,8 @@ public class Ping extends Command {
 
     @Override
     protected boolean execute(String[] args, Chat chat, User user) {
-        long now = System.currentTimeMillis();
-        int id = reply(chat, "Pong!").message().messageId();
+        var now = System.currentTimeMillis();
+        var id = reply(chat, "Pong!").message().messageId();
         editMessage(chat, id, "Pong! (" + (System.currentTimeMillis() - now) + "ms)");
         return true;
     }
