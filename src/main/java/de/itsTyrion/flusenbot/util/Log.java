@@ -1,7 +1,5 @@
 package de.itsTyrion.flusenbot.util;
 
-import lombok.val;
-
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,7 +26,7 @@ public final class Log {
 
     private static void log(String msg, Level level) {
         date.setTime(System.currentTimeMillis());
-        val time = '[' + df.format(date) + ']';
+        var time = '[' + df.format(date) + ']';
         if (level == Level.WARNING) {
             System.out.println(time + '[' + YELLOW + "WARN" + RESET + "] " + YELLOW + msg + RESET);
         } else if (level == Level.SEVERE) {

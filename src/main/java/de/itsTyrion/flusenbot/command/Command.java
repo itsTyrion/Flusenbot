@@ -4,12 +4,14 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.ChatMember;
 import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.EditMessageText;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import de.itsTyrion.flusenbot.Flusenbot;
+import de.itsTyrion.flusenbot.util.Utils;
 import lombok.Getter;
-import lombok.val;
+import lombok.NonNull;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -23,7 +25,7 @@ public abstract class Command {
     private final boolean adminOnly;
 
     protected Command() {
-        val info = Objects.requireNonNull(getClass().getAnnotation(CommandInfo.class));
+        var info = Objects.requireNonNull(getClass().getAnnotation(CommandInfo.class));
         name = info.name();
         permissions = info.permissions();
         adminOnly = info.isAdminOnly();
@@ -31,10 +33,20 @@ public abstract class Command {
 
     protected abstract boolean execute(String[] args, Chat chat, User user);
 
-    protected static SendResponse reply(Chat chat, String what) {
-        return api.execute(new SendMessage(chat.id(), what));
+    protected static SendResponse reply(@NonNull Chat chat, String what) {
+        return reply(chat, what, 0);
     }
-    protected static void editMessage(Chat chat, int messageID, String newText) {
+
+    protected static SendResponse reply(@NonNull Chat chat, String what, int deleteAfter) {
+        var response = api.execute(new SendMessage(chat.id(), what));
+        if (deleteAfter > 0)
+            Utils.runDelayed(() -> delete(chat.id(), response.message().messageId()), deleteAfter);
+        return response;
+    }
+
+    protected static void delete(Long chatID, int messageID) { api.execute(new DeleteMessage(chatID, messageID)); }
+
+    protected static void editMessage(@NonNull Chat chat, int messageID, String newText) {
         api.execute(new EditMessageText(chat.id(), messageID, newText));
     }
 

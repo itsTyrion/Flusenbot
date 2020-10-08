@@ -11,8 +11,10 @@ public class ReloadAdmins extends Command {
 
     @Override
     protected boolean execute(String[] args, Chat chat, User user) {
+        var id = reply(chat, "Reloading").message().messageId();
         AdminCache.refreshAdminCache(chat);
-        reply(chat, "Reloaded! (" + AdminCache.getAdmins(chat).size() + " Admins)");
+        delete(chat.id(), id);
+        reply(chat, "Reloaded!");
         return true;
     }
 }
