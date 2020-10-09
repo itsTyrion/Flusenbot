@@ -1,7 +1,7 @@
 # Created by https://www.gitignore.io
 
 # User-specific stuff
-.idea/**/*.xml
+.idea/*.xml
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/**/libraries
@@ -16,7 +16,6 @@
 .idea/**/dataSources.local.xml
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
 

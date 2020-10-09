@@ -2,6 +2,7 @@ package de.itsTyrion.flusenbot.util;
 
 import lombok.NonNull;
 
+import java.lang.Character.UnicodeBlock;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -20,8 +21,8 @@ public final class Utils {
      * Parses time imput from users in the format of "1d"
      *
      * @return -1 if the input was -1 or perma(nent),
-     *         -2 for wrong input (negative, not a number..),
-     *         otherwise the time parsed to milliseconds
+     * -2 for wrong input (negative, not a number..),
+     * otherwise the time parsed to milliseconds
      */
     public static long parseTimeInput(@NonNull String s) {
         if (s.equals("-1") || s.equals("perma") || s.equals("permanent"))
@@ -55,11 +56,18 @@ public final class Utils {
                 return -2;
         }
     }
-    public static int getUnixTime() {
-        return Math.toIntExact(System.currentTimeMillis() / 1000);
+
+    public static int getUnixTime() { return Math.toIntExact(System.currentTimeMillis() / 1000); }
+
+    public static void runDelayed(Runnable r, int delaySeconds) { exec.schedule(r, delaySeconds, TimeUnit.SECONDS); }
+
+
+    public static boolean containsArabic(String text) {
+        return text.chars().anyMatch(c -> UnicodeBlock.of(c) == UnicodeBlock.ARABIC);
     }
 
-    public static void runDelayed(Runnable r, int delaySeconds) {
-        exec.schedule(r, delaySeconds, TimeUnit.SECONDS);
-    }
+
+    private static final Pattern cyrillic = Pattern.compile(".*\\p{InCyrillic}.*");
+
+    public static boolean containsCyrillic(String text) { return cyrillic.matcher(text).matches(); }
 }
