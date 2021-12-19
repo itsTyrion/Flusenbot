@@ -38,7 +38,7 @@ public final class CommandHandler {
         if (text.contains("@") && !text.contains("flusenbot"))
             return;
 
-        var split = text.split(" ");
+        var split = text.split("\\s+"); // Pattern mathing one or more spaces
         var command = commands.get(split[0].substring(1).replace("@flusenbot", "").toLowerCase());
 
         if (command == null)

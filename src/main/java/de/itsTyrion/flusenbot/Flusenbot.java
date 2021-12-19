@@ -5,7 +5,6 @@ import de.itsTyrion.flusenbot.handler.UpdateHandler;
 import de.itsTyrion.flusenbot.util.InputThread;
 import de.itsTyrion.flusenbot.util.Log;
 import de.itsTyrion.flusenbot.util.Utils;
-import lombok.NonNull;
 
 import static de.itsTyrion.flusenbot.util.ANSIColor.*;
 
@@ -14,8 +13,7 @@ import static de.itsTyrion.flusenbot.util.ANSIColor.*;
  * @since 25.04.2019
  */
 public final class Flusenbot {
-    //    private static final long ID_BOTTEST = -1001487242269L;
-    private static final String VERSION = "1.2.6";
+    private static final String version = Flusenbot.class.getPackage().getImplementationVersion();
     public static TelegramBot api;
 
     public static void main(String... args) {
@@ -41,7 +39,7 @@ public final class Flusenbot {
         Log.log("Startup complete after " + (System.currentTimeMillis() - start) + "ms");
     }
 
-    private static @NonNull String getLogo() {
+    private static String getLogo() {
         var base = RED + "\n" +
                 " _______  _                 _______  _______  _        ______   _______ _________\n" +
                 "(  ____ \\( \\      |\\     /|(  ____ \\(  ____ \\( (    /|(  ___ \\ (  ___  )\\__   __/\n" +
@@ -54,11 +52,7 @@ public final class Flusenbot {
                 "\n";
 
         var toReplace = ")      |";
-        var replacement = CYAN + VERSION + substringBefore(toReplace.substring(VERSION.length())) + RED + '|';
+        var replacement = CYAN + version + Utils.substringBefore(toReplace.substring(version.length()), '|') + RED + '|';
         return base.replace(toReplace, ')' + replacement) + RESET + '\n';
-    }
-
-    private static @NonNull String substringBefore(@NonNull String str) {
-        return str.substring(0, str.indexOf('|') - 1);
     }
 }

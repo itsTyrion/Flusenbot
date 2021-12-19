@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
  * Created on 24/04/2020
  **/
 public final class Utils {
-    private static final ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(20);
+    private static final ScheduledThreadPoolExecutor exec =
+            new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors()*2);
+
     // Pattern to seperate numeric characters from non-numeric ones.
     // taken from: http://stackoverflow.com/a/8270824
     private static final Pattern splitter = Pattern.compile("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
@@ -57,10 +59,26 @@ public final class Utils {
         }
     }
 
+    /**
+     * @return The current UNIX time stamp in second; The Telegram API doesn't take the time stamp in MS.
+     */
     public static int getUnixTime() { return Math.toIntExact(System.currentTimeMillis() / 1000); }
 
-    public static void runDelayed(Runnable r, int delaySeconds) { exec.schedule(r, delaySeconds, TimeUnit.SECONDS); }
+    /**
+     * Executes the runnable outside the main thread after a delay
+     */
+    public static void runDelayed(Runnable runnable, int delaySeconds) {
+        exec.schedule(runnable, delaySeconds, TimeUnit.SECONDS);
+    }
 
+
+    /**
+     * @param s The original String
+     * @return The original string from start (index 0) to the first occurence of the given char
+     */
+    public static @NonNull String substringBefore(@NonNull String s, char before) {
+        return s.substring(0, s.indexOf(before) - 1);
+    }
 
     public static boolean containsArabic(String text) {
         return text.chars().anyMatch(c -> UnicodeBlock.of(c) == UnicodeBlock.ARABIC);

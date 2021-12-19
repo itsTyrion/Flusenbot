@@ -4,9 +4,9 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.ChatPermissions;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.BanChatMember;
 import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.EditMessageText;
-import com.pengrad.telegrambot.request.KickChatMember;
 import com.pengrad.telegrambot.request.RestrictChatMember;
 import de.itsTyrion.flusenbot.util.NewMember;
 
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class UpdateHandler implements UpdatesListener {
     private final TelegramBot bot;
-    static final Map<Integer, NewMember> map = new HashMap<>();
+    static final Map<Long, NewMember> map = new HashMap<>();
     private final MessageHandler messageHandler;
 
     public UpdateHandler(TelegramBot bot) {
@@ -52,7 +52,7 @@ public class UpdateHandler implements UpdatesListener {
                         } else if (entry.isFirstTry()) {
                             entry.setFirstTry(false);
                         } else {
-                            bot.execute(new KickChatMember(chatID, userID));
+                            bot.execute(new BanChatMember(chatID, userID));
                             map.remove(userID);
                             bot.execute(new DeleteMessage(chatID, entry.getId()));
 //                            bot.execute(new SendAnimation(chatID, "CgADAgAD2gIAAomSOUoNB6kOgnZtlwI"));
