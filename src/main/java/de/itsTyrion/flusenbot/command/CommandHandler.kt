@@ -8,10 +8,7 @@ import com.pengrad.telegrambot.request.DeleteMessage
 import com.pengrad.telegrambot.request.GetChatMember
 import com.pengrad.telegrambot.request.SendMessage
 import de.itsTyrion.flusenbot.cache.AdminCache.isAdmin
-import de.itsTyrion.flusenbot.command.commands.Cooldown
-import de.itsTyrion.flusenbot.command.commands.Ping
-import de.itsTyrion.flusenbot.command.commands.ReloadAdmins
-import de.itsTyrion.flusenbot.command.commands.Soon
+import de.itsTyrion.flusenbot.command.commands.*
 import de.itsTyrion.flusenbot.util.Utils.runDelayed
 
 class CommandHandler(private val api: TelegramBot) {
@@ -19,7 +16,7 @@ class CommandHandler(private val api: TelegramBot) {
             "ping" to Ping(),
             "reloadadmins" to ReloadAdmins(),
             "cooldown" to Cooldown(),
-            "kick" to Soon(),
+            "kick" to Kick(),
             "mute" to Soon(),
             "ban" to Soon()
     )
@@ -35,6 +32,16 @@ class CommandHandler(private val api: TelegramBot) {
 
         if (command.permissions.isNotEmpty()) {
             val member = api.execute(GetChatMember(chat.id(), user.id())).chatMember()
+
+            println("check ${member.user().username()}")
+            println(member.status())
+            Command.Permission.values().forEach {
+                try {
+                    println(it.check(member))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
             hasPermissions = (command.permissions.all { it.check(member) }
                     || command.name == "cooldown" && chat.id() == -1001238995053L && user.id() == ID_TYRION)
         }

@@ -9,6 +9,7 @@ import com.pengrad.telegrambot.request.DeleteMessage
 import com.pengrad.telegrambot.request.EditMessageText
 import com.pengrad.telegrambot.request.RestrictChatMember
 import de.itsTyrion.flusenbot.util.NewMember
+import de.itsTyrion.flusenbot.util.Utils
 
 /**
  * @author itsTyrion
@@ -37,7 +38,7 @@ class UpdateHandler(private val bot: TelegramBot) : UpdatesListener {
                     } else if (entry.isFirstTry) {
                         entry.isFirstTry = false
                     } else {
-                        bot.execute(BanChatMember(chatID, userID).revokeMessages(true))
+                        bot.execute(BanChatMember(chatID, userID).untilDate(Utils.getUnixTime() + 32).revokeMessages(true))
                         map.remove(userID)
                         bot.execute(DeleteMessage(chatID, entry.id))
                     }
